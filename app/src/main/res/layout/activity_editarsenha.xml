@@ -139,27 +139,40 @@
         app:layout_constraintVertical_bias="0.55" />
 
     <Button
-        android:id="@+id/btGerar"
-        android:layout_width="wrap_content"
+        android:id="@+id/btAlterar"
+        android:layout_width="105dp"
         android:layout_height="wrap_content"
         android:backgroundTint="#0AC603"
-        android:text="Gerar"
+        android:text="Alterar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.24"
+        app:layout_constraintHorizontal_bias="0.100"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.938" />
+
+    <Button
+        android:id="@+id/btApagar"
+        android:layout_width="105dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#7304AF"
+        android:text="Apagar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.500"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.938" />
 
     <Button
         android:id="@+id/btCancelar"
-        android:layout_width="wrap_content"
+        android:layout_width="105dp"
         android:layout_height="wrap_content"
         android:backgroundTint="#B10606"
         android:text="Cancelar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.762"
+        app:layout_constraintHorizontal_bias="0.900"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.938" />
