@@ -1,10 +1,15 @@
 package samuel.morais.minhassenhas
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var addButton: FloatingActionButton
@@ -14,7 +19,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
 
         this.addButton = this.findViewById(R.id.ButtonAdd)
 
@@ -40,9 +44,17 @@ class MainActivity : AppCompatActivity() {
         }
 
             //Substituir pelo listview
-//        cardSenha.setOnClickListener{
-//            val intent = Intent(this@MainActivity, Activity_EditarSenha::class.java)
-//            resultForm.launch(intent)
-//        }
+        cardSenha.setOnClickListener{
+            val intent = Intent(this@MainActivity, EditarSenhaActivity::class.java)
+            resultForm.launch(intent)
+        }
+
+        cardSenha.setOnLongClickListener{
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip: ClipData = ClipData.newPlainText("simple text", senha)
+            clipboard.setPrimaryClip(clip)
+
+            Toast.makeText(applicationContext,"Senha copiada para a área de transferência",Toast.LENGTH_SHORT).show()
+        }
     }
 }
