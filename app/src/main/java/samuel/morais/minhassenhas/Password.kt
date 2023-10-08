@@ -9,7 +9,6 @@ class Password {
 
 
 
-
     fun gerarSenha(tamanho: Int): String {
         val password = StringBuilder()
         val listaCaracteres = StringBuilder()
