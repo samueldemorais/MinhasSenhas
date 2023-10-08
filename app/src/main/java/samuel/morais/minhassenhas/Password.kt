@@ -3,9 +3,9 @@ package samuel.morais.minhassenhas
 class Password {
     private lateinit var tamanho: Number
     private lateinit var descricao: String
-    private var numero: Boolean = false
-    private var especial: Boolean = false
-    private var maiusculo: Boolean = false
+    var numero: Boolean = false
+    var especial: Boolean = false
+    var maiusculo: Boolean = false
 
 
 //    val senhaGerada = gerarSenha(tamanho)
