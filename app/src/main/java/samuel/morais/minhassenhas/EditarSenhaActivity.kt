@@ -74,13 +74,13 @@ class EditarSenhaActivity : AppCompatActivity() {
         finish()
     }
 
-    fun editarSenha(): String {
+    fun editarSenha(): Password {
         val novaSenha = Password()
         novaSenha.maiusculo = maiscula.isChecked
         novaSenha.numero = numeros.isChecked
         novaSenha.especial = especial.isChecked
-        val updateSenha = novaSenha.gerarSenha(seekBar.progress)
-        return updateSenha
+        novaSenha.gerarSenha(seekBar.progress)
+        return novaSenha
     }
 
 }

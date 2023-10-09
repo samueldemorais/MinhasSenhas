@@ -34,9 +34,8 @@ class Activity_NovaSenha : AppCompatActivity() {
         this.descricao = this.findViewById(R.id.etDescricao)
         this.seekBar = this.findViewById(R.id.seekBar)
 
-
         val novaSenha = Password()
-        //Seekbar
+
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 atualNumero.text = progress.toString()
@@ -59,15 +58,11 @@ class Activity_NovaSenha : AppCompatActivity() {
                 novaSenha.numero = cbNumero.isChecked
                 novaSenha.especial = cbEspecial.isChecked
                 //GerarSenha
-                val senhaNova = novaSenha.gerarSenha(novaSenha.tamanho)
+                novaSenha.gerarSenha(novaSenha.tamanho)
 
-                val arraySenha = ArrayList<String>()
-                arraySenha.add(novaSenha.descricao)
-                arraySenha.add(senhaNova)
-                arraySenha.add(novaSenha.tamanho.toString())
 
                 val intent = Intent()
-                intent.putStringArrayListExtra("novaSenha", arraySenha)
+                intent.putExtra("novaSenha", novaSenha)
                 setResult(Activity.RESULT_OK, intent)
                 finish()
             }
