@@ -4,13 +4,16 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.util.Objects
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var listView: ListView
@@ -18,46 +21,73 @@ class MainActivity : AppCompatActivity() {
     private lateinit var descricao: String
     private lateinit var tamanho: String
     private lateinit var senha: String
-    private val senhaList: MutableList<String> = ArrayList()
+    private val senhaList: MutableList<Password> = ArrayList()
+    var numSenhaSelecionada = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         listView = findViewById(R.id.listView)
         addButton = findViewById(R.id.ButtonAdd)
 
-        val adapter = ArrayAdapter<String>(this, R.layout.list_item, senhaList)
+
+        val adapter = SenhaAdapter(this, R.layout.list_item, senhaList)
         listView.adapter = adapter
 
-        val resultForm = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-            if (it.resultCode == RESULT_OK){
-                val arraySenha = it.data?.getStringArrayListExtra("senhaNova")
-                if (arraySenha != null) {
-                    descricao = arraySenha[0]
-                    tamanho = arraySenha[1]
-                    senha = arraySenha[2]
+        this.addButton = this.findViewById(R.id.ButtonAdd)
+
+
+        val resultForm = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+
+                    if (it.resultCode == RESULT_OK){
+                        val data = it.data
+                        val senhaNova: Password? = data?.getParcelableExtra("novaSenha")
+                        Log.d("msg", "voltei de la")
+                        if (senhaNova != null) {
+                            val senhaTeste = senhaNova.toString()
+                            Log.d("msg", senhaTeste)
+                            senhaList.add(senhaNova)
+                            adapter.notifyDataSetChanged()
+                        }
+
+                        val senhaEditada: Password? = data?.getParcelableExtra("senhaAlterada")
+                        Log.d("EDITADA", senhaEditada.toString())
+                        if (senhaEditada != null) {
+                            senhaList[numSenhaSelecionada] = senhaEditada
+                            adapter.notifyDataSetChanged()
+                        }
+                        val senhaApagada: Password? = data?.getParcelableExtra("senhaApagada")
+                        Log.d("EDITADA", senhaApagada.toString())
+                        if (senhaApagada != null){
+                            Log.d("EDITADA", senhaList.toString())
+                            senhaList.remove(senhaList[numSenhaSelecionada])
+                            Log.d("EDITADA", senhaList.toString())
+                            adapter.notifyDataSetChanged()
+                        }
+
+                }}
+                addButton.setOnClickListener {
+                    val intent = Intent(this@MainActivity, Activity_NovaSenha::class.java)
+                    resultForm.launch(intent)
                 }
-                val senhaEditada = it.data?.getStringArrayListExtra("senhaEditada")
-                if (senhaEditada != null){
-                    descricao = senhaEditada[0]
-                    tamanho = senhaEditada[1]
-                    senha = senhaEditada[2]
+                listView.setOnItemLongClickListener { _, _, position, _ ->
+                    // Lógica para o clique longo
+                    val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clip: ClipData = ClipData.newPlainText("simple text", senhaList[position].senha)
+                    clipboard.setPrimaryClip(clip)
+                    Toast.makeText(this@MainActivity, "Senha copiada para a área de transferência", Toast.LENGTH_SHORT).show()
+                    true
                 }
+
+
+                listView.setOnItemClickListener { _, _, position, _ ->
+                    val senhaSelecionada = senhaList[position]
+                    numSenhaSelecionada = position
+                    Log.d("msg", "oi vim pra ca")
+                    val intent = Intent(this@MainActivity, EditarSenhaActivity::class.java)
+                    intent.putExtra("senha", senhaSelecionada)
+                    resultForm.launch(intent)
+                }
+
 
             }
-
-        }
-        addButton.setOnClickListener {
-            val intent = Intent(this@MainActivity, Activity_NovaSenha::class.java)
-            resultForm.launch(intent)
-        }
-
-        cardSenha.setOnLongClickListener{
-            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-            val clip: ClipData = ClipData.newPlainText("simple text", senha)
-            clipboard.setPrimaryClip(clip)
-
-            Toast.makeText(applicationContext,"Senha copiada para a área de transferência",Toast.LENGTH_SHORT).show()
-        }
-
     }
-}

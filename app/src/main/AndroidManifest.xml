@@ -26,6 +26,8 @@
         </activity>
         <activity android:name=".Activity_NovaSenha">
         </activity>
+        <activity android:name=".EditarSenhaActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -3,6 +3,8 @@ package samuel.morais.minhassenhas
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.util.Log
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -36,44 +38,56 @@ class EditarSenhaActivity : AppCompatActivity() {
         seekBar = findViewById(R.id.seekBar)
         atualNumero = findViewById(R.id.tvTamanhoAtual)
 
+        val senha = intent.getParcelableExtra<Password>("senha")
+        if (senha != null) {
+            // Faça algo com o objeto Senha
+            //Seekbar
+            val descricaoEditable = Editable.Factory.getInstance().newEditable(senha.descricao)
+            descricao.text = descricaoEditable
+            seekBar.progress = senha.tamanho
 
-        //Seekbar
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                atualNumero.text = progress.toString()
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
-        })
+            seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    atualNumero.text = progress.toString()
+                }
 
-        alterarSenha.setOnClickListener(){
-            alteraSenha()
-        }
-        apagarSenha.setOnClickListener(){
-            apagarSenha()
-        }
-        cancelar.setOnClickListener(){
-            cancelar()
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                }
+            })
+
+            alterarSenha.setOnClickListener() {
+                alteraSenha(senha)
+            }
+            apagarSenha.setOnClickListener() {
+                apagarSenha(senha)
+            }
+            cancelar.setOnClickListener() {
+                cancelar()
+            }
         }
     }
 
-    fun alteraSenha(){
-        val arraySenha = ArrayList<String>()
-        val senhaAlterada = editarSenha()
-        arraySenha.add(senhaAlterada)
-        arraySenha.add(descricao.text.toString())
-        arraySenha.add(atualNumero.text.toString())
-        arraySenha.add(senhaAlterada)
+    fun alteraSenha(senha: Password){
+
+        val senhaAlterada = editarSenha(senha)
+
         val intent = Intent()
-        intent.putStringArrayListExtra("senhaAlterada", arraySenha)
+        Log.d("msg", senhaAlterada.toString())
+        intent.putExtra("senhaAlterada", senhaAlterada)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
-    fun apagarSenha(){
+    fun apagarSenha(senha: Password){
         val intent = Intent()
-        intent.putExtra("senhaApagada", true)
+        Log.d("msg", senha.toString())
+        intent.putExtra("senhaApagada", senha)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
@@ -81,13 +95,14 @@ class EditarSenhaActivity : AppCompatActivity() {
         finish()
     }
 
-    fun editarSenha(): String {
-        val novaSenha = Password()
+    fun editarSenha(novaSenha: Password): Password {
         novaSenha.maiusculo = maiscula.isChecked
         novaSenha.numero = numeros.isChecked
         novaSenha.especial = especial.isChecked
-        val updateSenha = novaSenha.gerarSenha(seekBar.progress)
-        return updateSenha
+        novaSenha.gerarSenha(seekBar.progress)
+        novaSenha.descricao = descricao.text.toString()
+        novaSenha.tamanho = seekBar.progress
+        return novaSenha
     }
 
 }
