@@ -39,12 +39,19 @@ class EditarSenhaActivity : AppCompatActivity() {
         atualNumero = findViewById(R.id.tvTamanhoAtual)
 
         val senha = intent.getParcelableExtra<Password>("senha")
+        //Deixar a tela de acordo com as configurações da senhas
         if (senha != null) {
-            // Faça algo com o objeto Senha
-            //Seekbar
             val descricaoEditable = Editable.Factory.getInstance().newEditable(senha.descricao)
             descricao.text = descricaoEditable
             seekBar.progress = senha.tamanho
+            if (senha.maiusculo)
+                maiscula.isChecked = true
+            if (senha.numero)
+                numeros.isChecked = true
+            if (senha.especial)
+                especial.isChecked = true
+
+
 
             seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(
@@ -71,6 +78,8 @@ class EditarSenhaActivity : AppCompatActivity() {
             cancelar.setOnClickListener() {
                 cancelar()
             }
+        } else {
+            //da erro
         }
     }
 
@@ -79,14 +88,12 @@ class EditarSenhaActivity : AppCompatActivity() {
         val senhaAlterada = editarSenha(senha)
 
         val intent = Intent()
-        Log.d("msg", senhaAlterada.toString())
         intent.putExtra("senhaAlterada", senhaAlterada)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
     fun apagarSenha(senha: Password){
         val intent = Intent()
-        Log.d("msg", senha.toString())
         intent.putExtra("senhaApagada", senha)
         setResult(Activity.RESULT_OK, intent)
         finish()
