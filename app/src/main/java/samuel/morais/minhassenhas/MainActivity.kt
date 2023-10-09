@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.util.Objects
 
 
 class MainActivity : AppCompatActivity() {
@@ -24,15 +25,13 @@ class MainActivity : AppCompatActivity() {
 
         val resultForm = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if (it.resultCode == RESULT_OK){
-                val arraySenha = it.data?.getStringArrayListExtra("senhaNova")
-                if (arraySenha != null) {
-                    descricao = arraySenha[0]
-                    tamanho = arraySenha[1]
-                    senha = arraySenha[2]
+                val senhaNova: Password? = intent.getParcelableExtra("senhaNova")
+                if (senhaNova != null) {
+
                 }
-                val senhaEditada = it.data?.getStringExtra("senhaEditada")
+                val senhaEditada: Password? = intent.getParcelableExtra("senhaEditada")
                 if (senhaEditada != null){
-                    //Faz alguma coisa
+
                 }
 
             }
@@ -43,7 +42,6 @@ class MainActivity : AppCompatActivity() {
             resultForm.launch(intent)
         }
 
-            //Substituir pelo listview
         cardSenha.setOnClickListener{
             val intent = Intent(this@MainActivity, EditarSenhaActivity::class.java)
             resultForm.launch(intent)
