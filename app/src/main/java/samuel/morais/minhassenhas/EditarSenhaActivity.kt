@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -20,11 +21,12 @@ class EditarSenhaActivity : AppCompatActivity() {
     private lateinit var numeros: CheckBox
     private lateinit var seekBar: SeekBar
     private lateinit var atualNumero: TextView
-
+    private lateinit var descricao: EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_editarsenha)
 
+        descricao = findViewById(R.id.etDescricao)
         alterarSenha = findViewById(R.id.btAlterar)
         apagarSenha = findViewById(R.id.btApagar)
         cancelar = findViewById(R.id.btCancelar)
@@ -58,9 +60,14 @@ class EditarSenhaActivity : AppCompatActivity() {
     }
 
     fun alteraSenha(){
+        val arraySenha = ArrayList<String>()
         val senhaAlterada = editarSenha()
+        arraySenha.add(senhaAlterada)
+        arraySenha.add(descricao.text.toString())
+        arraySenha.add(atualNumero.text.toString())
+        arraySenha.add(senhaAlterada)
         val intent = Intent()
-        intent.putExtra("senhaAlterada", senhaAlterada)
+        intent.putStringArrayListExtra("senhaAlterada", arraySenha)
         setResult(Activity.RESULT_OK, intent)
         finish()
     }

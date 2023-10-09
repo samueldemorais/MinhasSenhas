@@ -6,6 +6,7 @@ class Password {
     var numero: Boolean = false
     var especial: Boolean = false
     var maiusculo: Boolean = false
+    lateinit var senha: String
 
 
 
@@ -31,6 +32,7 @@ class Password {
             password.append(randomCaracteres)
         }
 
-        return password.toString()
+        senha = password.toString()
+        return senha
     }
 }
