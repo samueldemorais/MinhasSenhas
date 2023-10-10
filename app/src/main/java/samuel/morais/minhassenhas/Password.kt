@@ -14,12 +14,19 @@ class Password() : Parcelable {
     constructor(parcel: Parcel) : this() {
         tamanho = parcel.readInt()
         descricao = parcel.readString() ?: ""
+        numero = parcel.readByte() != 0.toByte()
+        especial = parcel.readByte() != 0.toByte()
+        maiusculo = parcel.readByte() != 0.toByte()
         senha = parcel.readString() ?: ""
+
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(tamanho)
         parcel.writeString(descricao)
+        parcel.writeByte(if (numero) 1 else 0)
+        parcel.writeByte(if (especial) 1 else 0)
+        parcel.writeByte(if (maiusculo) 1 else 0)
         parcel.writeString(senha)
     }
 

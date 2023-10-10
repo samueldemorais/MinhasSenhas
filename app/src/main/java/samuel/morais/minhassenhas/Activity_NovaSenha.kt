@@ -40,7 +40,6 @@ class Activity_NovaSenha : AppCompatActivity() {
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 atualNumero.text = progress.toString()
-                novaSenha.tamanho = progress
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
             }
@@ -54,6 +53,8 @@ class Activity_NovaSenha : AppCompatActivity() {
             if (inputText.isNotEmpty()) {
                 //Descricao
                 novaSenha.descricao = inputText
+                //Seekbar
+                novaSenha.tamanho = seekBar.progress
                 //CheckBox
                 novaSenha.maiusculo = cbMaiusculo.isChecked
                 novaSenha.numero = cbNumero.isChecked
@@ -61,11 +62,9 @@ class Activity_NovaSenha : AppCompatActivity() {
                 //GerarSenha
                 novaSenha.gerarSenha(novaSenha.tamanho)
 
-
                 val intent = Intent()
                 intent.putExtra("novaSenha", novaSenha)
                 setResult(Activity.RESULT_OK, intent)
-                Log.d("TAG", "ENTREI AQUI NO NOVASENHA")
                 finish()
             }
         }
