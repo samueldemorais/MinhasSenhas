@@ -2,6 +2,7 @@ package samuel.morais.minhassenhas
 
 import android.os.Parcel
 import android.os.Parcelable
+import android.util.Log
 
 class Password() : Parcelable {
     var tamanho = 0
@@ -10,6 +11,7 @@ class Password() : Parcelable {
     var especial: Boolean = false
     var maiusculo: Boolean = false
     lateinit var senha: String
+
 
     constructor(parcel: Parcel) : this() {
         tamanho = parcel.readInt()
@@ -56,21 +58,42 @@ class Password() : Parcelable {
         val maiuscula = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         val numeros = "0123456789"
         val especiais = "!@#/$%^&*()_+-=[]{}|;:,.<>?"
+        var digSenha = tamanho
 
         listaCaracteres.append(minuscula)
-        if (maiusculo)
+        if (maiusculo){
             listaCaracteres.append(maiuscula)
-        if (numero)
-            listaCaracteres.append(numeros)
-        if(especial)
-            listaCaracteres.append(especiais)
+            val randomIndex = (maiuscula.indices).random()
+            val randomCaracteres = maiuscula[randomIndex]
+            password.append(randomCaracteres)
+            digSenha -=1
+        }
 
-        repeat(tamanho) {
+        if (numero) {
+            listaCaracteres.append(numeros)
+            val randomIndex = (numeros.indices).random()
+            val randomCaracteres = numeros[randomIndex]
+            password.append(randomCaracteres)
+            digSenha -=1
+        }
+        if(especial){
+            listaCaracteres.append(especiais)
+            val randomIndex = (especiais.indices).random()
+            val randomCaracteres = especiais[randomIndex]
+            password.append(randomCaracteres)
+            digSenha -=1
+        }
+
+
+        repeat(digSenha) {
             val randomIndex = (listaCaracteres.indices).random()
             val randomCaracteres = listaCaracteres[randomIndex]
             password.append(randomCaracteres)
         }
-        senha = password.toString()
+
+        val charArray = password.toString().toCharArray()
+        charArray.shuffle()
+        senha = String(charArray)
         return senha
     }
 }
