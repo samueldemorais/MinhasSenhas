@@ -20,57 +20,54 @@ class Activity_NovaSenha : AppCompatActivity() {
     private lateinit var cbEspecial: CheckBox
     private lateinit var descricao: EditText
     private lateinit var seekBar: SeekBar
-
+    private lateinit var senhasDAO: SenhasDAO
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_novasenha)
 
-        this.atualNumero = this.findViewById(R.id.tvTamanhoAtual)
-        this.gerar = this.findViewById(R.id.btGerar)
-        this.cancelar = this.findViewById(R.id.btCancelar)
-        this.cbMaiusculo = this.findViewById(R.id.cbMaiusculo)
-        this.cbNumero = this.findViewById(R.id.cbNumeros)
-        this.cbEspecial = this.findViewById(R.id.cbEspecial)
-        this.descricao = this.findViewById(R.id.etDescricao)
-        this.seekBar = this.findViewById(R.id.seekBar)
+        this.atualNumero = findViewById(R.id.tvTamanhoAtual)
+        this.gerar = findViewById(R.id.btGerar)
+        this.cancelar = findViewById(R.id.btCancelar)
+        this.cbMaiusculo = findViewById(R.id.cbMaiusculo)
+        this.cbNumero = findViewById(R.id.cbNumeros)
+        this.cbEspecial = findViewById(R.id.cbEspecial)
+        this.descricao = findViewById(R.id.etDescricao)
+        this.seekBar = findViewById(R.id.seekBar)
 
-        val novaSenha = Password()
+
+        this.senhasDAO = SenhasDAO(this)
+
+        val novaSenha = Password("", "")
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 atualNumero.text = progress.toString()
             }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-
         this.gerar.setOnClickListener {
+            Log.d("NovaSenhaKT", "passei no GERAR do nova senha")
             val inputText = descricao.text.toString()
             if (inputText.isNotEmpty()) {
-                //Descricao
+                // Descricao
                 novaSenha.descricao = inputText
-                //Seekbar
-                novaSenha.tamanho = seekBar.progress
-                //CheckBox
-                novaSenha.maiusculo = cbMaiusculo.isChecked
-                novaSenha.numero = cbNumero.isChecked
-                novaSenha.especial = cbEspecial.isChecked
-                //GerarSenha
-                novaSenha.gerarSenha(novaSenha.tamanho)
-
-                val intent = Intent()
-                intent.putExtra("novaSenha", novaSenha)
-                setResult(Activity.RESULT_OK, intent)
+                novaSenha.gerarSenha(seekBar.progress, cbMaiusculo.isChecked, cbNumero.isChecked, cbEspecial.isChecked)
+                Log.d("NovaSenhaKT", "GEREI do nova senha")
+                senhasDAO.insert(novaSenha)
+                Log.d("NovaSenhaKT", "INSERI do nova senha")
                 finish()
             }
         }
 
-        this.cancelar.setOnClickListener(){
+        this.cancelar.setOnClickListener {
+            Log.d("NovaSenhaKT", "passei no cancelar do nova senha")
             finish()
         }
     }
 }
+

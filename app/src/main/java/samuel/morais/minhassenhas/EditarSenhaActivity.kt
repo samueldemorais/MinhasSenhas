@@ -10,6 +10,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
 
@@ -24,6 +25,7 @@ class EditarSenhaActivity : AppCompatActivity() {
     private lateinit var seekBar: SeekBar
     private lateinit var atualNumero: TextView
     private lateinit var descricao: EditText
+    private lateinit var senhasDAO: SenhasDAO
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_editarsenha)
@@ -37,20 +39,23 @@ class EditarSenhaActivity : AppCompatActivity() {
         numeros = findViewById(R.id.cbNumeros)
         seekBar = findViewById(R.id.seekBar)
         atualNumero = findViewById(R.id.tvTamanhoAtual)
+        this.senhasDAO = SenhasDAO(this)
 
-        val senha = intent.getParcelableExtra<Password>("senha")
+        val senhaId = intent.getIntExtra("senhaId", -1)
+        val senha: Password? = if (senhaId != -1) senhasDAO.find(senhaId) else null
+
+
         //Deixar a tela de acordo com as configurações da senhas
         if (senha != null) {
             val descricaoEditable = Editable.Factory.getInstance().newEditable(senha.descricao)
             descricao.text = descricaoEditable
-            seekBar.progress = senha.tamanho
-            if (senha.maiusculo)
+            seekBar.progress = senha.verificarTamanho()
+            if (senha.verificarMaiusculo())
                 maiscula.isChecked = true
-            if (senha.numero)
+            if (senha.verificarNumero())
                 numeros.isChecked = true
-            if (senha.especial)
+            if (senha.verificarEspecial())
                 especial.isChecked = true
-
 
 
             seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -85,31 +90,48 @@ class EditarSenhaActivity : AppCompatActivity() {
 
     fun alteraSenha(senha: Password){
 
-        val senhaAlterada = editarSenha(senha)
-
-        val intent = Intent()
-        intent.putExtra("senhaAlterada", senhaAlterada)
-        setResult(Activity.RESULT_OK, intent)
+        val senhaAlterada = criarSenhaEditada(senha)
+        senhasDAO.update(senhaAlterada)
+        exibirMensagem("Senha alterada com sucesso")
+        setResult(Activity.RESULT_OK)
         finish()
     }
     fun apagarSenha(senha: Password){
-        val intent = Intent()
-        intent.putExtra("senhaApagada", senha)
-        setResult(Activity.RESULT_OK, intent)
+        senhasDAO.delete(senha.id)
+        exibirMensagem("Senha apagada com sucesso")
+        setResult(Activity.RESULT_OK)
         finish()
     }
     fun cancelar(){
         finish()
     }
 
-    fun editarSenha(novaSenha: Password): Password {
-        novaSenha.maiusculo = maiscula.isChecked
-        novaSenha.numero = numeros.isChecked
-        novaSenha.especial = especial.isChecked
-        novaSenha.gerarSenha(seekBar.progress)
-        novaSenha.descricao = descricao.text.toString()
-        novaSenha.tamanho = seekBar.progress
-        return novaSenha
+    fun criarSenhaEditada(senha: Password): Password {
+        val descricaoEditada = descricao.text.toString()
+        val tamanhoSenha = seekBar.progress
+        val maiusculo = maiscula.isChecked
+        val numero = numeros.isChecked
+        val especial = especial.isChecked
+
+
+        if (descricaoEditada.isEmpty()) {
+            throw IllegalArgumentException("Descrição não pode ser vazia")
+        }
+
+
+        return Password(
+            senha.id,
+            descricaoEditada,
+            senha.gerarSenha(tamanhoSenha, maiusculo, numero, especial),
+            System.currentTimeMillis(),
+            System.currentTimeMillis()
+        )
     }
+
+    private fun exibirMensagem(mensagem: String) {
+        Toast.makeText(this, mensagem, Toast.LENGTH_SHORT).show()
+    }
+
+
 
 }
